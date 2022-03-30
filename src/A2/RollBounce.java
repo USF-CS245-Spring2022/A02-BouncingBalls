@@ -28,6 +28,8 @@ public class RollBounce extends JPanel implements ActionListener {
         private Color color;
         private int xCoord, yCoord;
         private int xVel, yVel;
+        int ballHeight = 10;
+        private boolean moveDown = true, moveRight = true;
 
         public Ball() {
 //            size = new Dimension(ball_radius, ball_radius);
@@ -84,57 +86,168 @@ public class RollBounce extends JPanel implements ActionListener {
         // TODO: Change the location of each ball. Here's an example of them moving across the screen:
         //       ... but to be clear, you should change this.
 
-        System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
+//        System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
 //        System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+//        System.out.println("ballHeight: " + ball1.ballHeight);
 
-        ball1.xCoord += ball1.xVel;
-        ball1.xVel += gravity;
-        ball1.yCoord += ball1.yVel;
-        ball1.yVel += gravity;
+//        ball1.xCoord += gravity;
+//        ball1.yCoord += gravity;
 
-        if (ball1.yCoord + ball_radius < 0) { //touch top
-            System.out.println("touch top");
-            if (ball1.yVel < 0) {
-                ball1.yVel = 0;
+        if (ball1.moveDown) {
+//            System.out.println("move down");
+            if (ball1.yCoord > window_height) { //touch bottom
+                ball1.moveDown = false;
+                System.out.println("touch bottom");
+
+                ball1.ballHeight += gravity; //ball1.ballHeight / 2;
+
+                ball1.xVel = ball1.xVel / friction;
+                ball1.yVel = -ball1.yVel / friction;
+
+                ball1.xCoord += ball1.xVel;
+                ball1.yCoord += ball1.yVel;
+
+                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
+                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
             }
-//            ball1.xVel += gravity;
-            ball1.yCoord = ball_radius;
-            ball1.yVel = -ball1.yVel / friction;
-            System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+            else if (ball1.xCoord < 0) { //touch left
+                System.out.println("touch left down");
 
-        }
-        if (ball1.yCoord - ball_radius > window_height) { //touch bottom
-            System.out.println("touch bottom");
-            if (ball1.yVel < 0) {
-                System.out.println("speical bottom");
-                ball1.yVel = 0;
+                ball1.moveRight = true;
+
+                ball1.ballHeight += gravity;
+
+                ball1.xVel *= -1;
+                ball1.yVel *= -1;
+
+                ball1.xCoord = -ball1.xCoord;
+                ball1.yCoord += ball1.yVel;
+
+//                ball1.xCoord += ball1.xVel;
+//                ball1.xVel = -ball1.xVel / friction;
+//                ball1.yCoord += ball1.yVel;
+//                ball1.yVel = ball1.yVel / friction;
+                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
+                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
             }
-//            ball1.xVel += gravity;
-            ball1.yCoord = window_height - ball_radius;
-            ball1.yVel = -ball1.yVel / friction;
-            System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+            else if (ball1.xCoord > window_width) { //touch right
+                System.out.println("touch right down");
 
-        }
+                ball1.moveRight = false;
 
-        if (ball1.xCoord + ball_radius < 0) { //touch left
-            System.out.println("touch left");
-            ball1.xCoord = ball_radius;
-            ball1.xVel = -ball1.xVel / friction;
-            System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+                ball1.ballHeight += gravity;
 
-        }
-        if (ball1.xCoord - ball_radius > window_width) { //touch right
-            if (ball1.xVel < 0) {
-                System.out.println("special right");
-                ball1.xVel = 0;
+                ball1.xVel *= -1;
+                ball1.yVel *= -1;
+
+                ball1.xCoord = window_width - ball1.xCoord;
+                ball1.yCoord += ball1.yVel;
+//                if (ball1.xVel < 0) {
+//                    System.out.println("special right");
+//                    ball1.xVel = 0;
+//                }
+//                System.out.println("touch right");
+//                ball1.xCoord -= ball1.xVel;
+//                ball1.xVel = -ball1.xVel / friction;
+//                ball1.yCoord += ball1.yVel;
+//                ball1.yVel = ball1.yVel / friction;
+                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
+                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
             }
-            System.out.println("touch right");
-            ball1.xCoord = window_width - ball_radius;
-            ball1.xVel = -ball1.xVel / friction;
-            System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
-
+            else {
+                System.out.print("just move down");
+                if (ball1.moveRight) {
+                    System.out.println(" right");
+                    ball1.xCoord += ball_radius;
+                }
+                else {
+                    System.out.println(" left");
+                    ball1.xCoord -= ball_radius;
+                }
+                ball1.yCoord += ball_radius;
+            }
         }
+        else {
+//            System.out.println("move up");
+            if (ball1.yCoord < ball1.ballHeight) { //touch top
+                ball1.moveDown = true;
 
+                ball1.ballHeight += gravity; //ball1.ballHeight / 2;
+                System.out.println("touch top up");
+
+//                if (ball1.yVel < 0) { //was moving up
+//                    ball1.yVel = 0;
+//                }
+                ball1.xVel = ball1.xVel / friction;
+                ball1.yVel = -ball1.yVel / friction;
+
+                ball1.xCoord += ball1.xVel;
+                ball1.yCoord -= ball1.yVel;
+
+                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
+                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+            }
+            else if (ball1.xCoord < 0) { //touch left
+                ball1.moveDown = true;
+                ball1.moveRight = true;
+
+                System.out.println("touch left up");
+
+                ball1.ballHeight += gravity;
+
+                ball1.xVel *= -1;
+                ball1.yVel *= -1;
+                ball1.xCoord -= ball1.xVel;
+                ball1.yCoord += ball1.yVel;
+
+//                ball1.xCoord += ball1.xVel;
+//                ball1.xVel = ball1.xVel / friction;
+//                ball1.yCoord += ball1.yVel;
+//                ball1.yVel = -ball1.yVel / friction;
+                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
+                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+            }
+            else if (ball1.xCoord - ball_radius > window_width) { //touch right
+                ball1.moveDown = true;
+                ball1.moveRight = false;
+
+                System.out.println("touch right up");
+
+                ball1.ballHeight += gravity; //window_width
+
+                ball1.xVel *= -1;
+                ball1.yVel *= -1;
+                ball1.xCoord -= ball1.xVel;
+                ball1.yCoord += ball1.yVel;
+
+//                if (ball1.xVel < 0) {
+//                    System.out.println("special right");
+//                    ball1.xVel = 0;
+//                }
+//                System.out.println("touch right");
+//                ball1.xCoord -= ball1.xVel;
+//                ball1.xVel = -ball1.xVel / friction;
+//                ball1.yCoord += ball1.yVel;
+//                ball1.yVel = -ball1.yVel / friction;
+
+                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
+                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+            }
+            else {
+                System.out.print("just move up");
+                if (ball1.moveRight) {
+                    System.out.println(" right");
+                    ball1.xCoord += ball_radius;
+                }
+                else {
+                    System.out.println(" left");
+                    ball1.xCoord -= ball_radius;
+                }
+                ball1.yCoord -= ball_radius;
+            }
+        }
+//        ball1.xCoord += ball1.xVel;
+//        ball1.yCoord += ball1.yVel;
         repaint();
 
 
