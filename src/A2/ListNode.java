@@ -2,12 +2,11 @@
 // @date and version: 24 Mar 2022, v.4
 // CS245 Lab 6: ListNode
 
-package lab06;
+package A2;
 
-import java.util.List;
 import java.util.Objects;
 
-public class ListNode<T> {
+public class ListNode<T> implements List<T> {
 
     private static class Node<T> {
         T data; //data carried by this node
@@ -30,7 +29,7 @@ public class ListNode<T> {
 //        size = 0;
 //    }
 
-    private int size() {
+    public int size() {
         return size;
     }
 
