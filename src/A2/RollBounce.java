@@ -9,30 +9,41 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import A2.ListNode;
 
 public class RollBounce extends JPanel implements ActionListener {
 
-    protected Timer tm;
+    final Timer tm;
 
-    private List<Ball> allBalls;
-    private static int minspeed, maxspeed;
-    private static int gravity, friction, timerDelay, balls, window_height, window_width, ball_radius;
+    Ball b;
 
-    Ball ball1;
-
+    private static List<Ball> allBalls;
+    private static int minSpeed, maxSpeed;
+    private static int gravity, friction, timerDelay, balls, windowHeight, windowWidth, ballRadius;
+    private static String list;
 
     public class Ball {
         private Color color;
         private int xCoord, yCoord;
         private int xVel, yVel;
-        private double ballHeight = 10;
-        private boolean moveDown = true, moveRight = true;
 
         public Ball() {
-//            size = new Dimension(ball_radius, ball_radius);
+//            size = new Dimension(ballRadius, ballRadius);
+        }
+
+        public void setCoords(int x, int y) {
+            this.xCoord = x;
+            this.yCoord = y;
+        }
+
+        public void setVels(int xV, int yV) {
+            this.xVel = xV;
+            this.yVel = yV;
         }
 
         public void setColor(Color color) {
@@ -47,25 +58,103 @@ public class RollBounce extends JPanel implements ActionListener {
 
 
     public RollBounce (String propertyFileName) {
-        // TODO: insert your code to read from configuration file here.
+
         gravity = 10;
         friction = 2;
-        minspeed = 5;
-        maxspeed = 35;
+        minSpeed = 5;
+        maxSpeed = 35;
         timerDelay = 75;
         balls = 7;
-        window_height = 480;
-        window_width = 640;
-        ball_radius = 20;
-        ball1 = new Ball();
+        windowHeight = 480;
+        windowWidth = 640;
+        ballRadius = 20;
 
-        tm = new Timer(timerDelay, this); // TODO: Replace the first argument with delay with value from config file.
+//        allBalls = new ArrayList<Ball>();
+//
+//        for (int i = 0; i < balls; i++) { //create all balls
+//                allBalls.add(new Ball());
+//        }
+//
+//            for (Ball ball : allBalls) { //set starting coords & vels & color
+//                int x = random(0, windowWidth);
+//                int y = random(0, windowHeight);
+//
+//                int xV = random(minSpeed, maxSpeed);
+//                int yV = random(minSpeed, maxSpeed);
+//
+//                ball.setCoords(x, y);
+//                ball.setVels(xV, yV);
+//                ball.setColor(randColor());
+//            }
+//
+        b = new Ball();
 
+        int x = random(0, windowWidth);
+        int y = random(0, windowHeight);
 
-        ball1.xCoord = 20;
-        ball1.yCoord = 20;
-        ball1.xVel = 10;
-        ball1.yVel = 10;
+        int xV = random(minSpeed, maxSpeed);
+        int yV = random(minSpeed, maxSpeed);
+
+        b.setCoords(x, y);
+        b.setVels(xV, yV);
+        b.setColor(randColor());
+
+        tm = new Timer(timerDelay, this);
+
+//        Properties p = new Properties();
+//        try {
+//            p.load(new FileInputStream(propertyFileName));
+//            gravity = (int) p.get("gravity");
+//            friction = (int) p.get("friction");
+////            allBalls = (List<Ball>) Class.forName((String) p.get("list")).getDeclaredConstructor().newInstance();
+//            list = (String) p.get("list");
+//            minSpeed = (int) p.get("minspeed");
+//            maxSpeed = (int) p.get("maxSpeed");
+//            timerDelay = (int) p.get("timerDelay");
+//            balls = (int) p.get("balls");
+//            windowHeight = (int) p.get("window_height");
+//            windowWidth = (int) p.get("window_width");
+//            ballRadius = (int) p.get("ball_radius");
+//
+////            if (list.equals("arrayList")) {
+////                allBalls = new ArrayList<Ball>();
+////            }
+////            else {
+////                allBalls = new ListNode<Ball>();
+////            }
+//
+//            allBalls = new ArrayList<Ball>();
+//
+//            for (int i = 0; i < balls; i++) { //create all balls
+//                allBalls.add(new Ball());
+//            }
+//
+//            for (Ball ball : allBalls) { //set starting coords & vels & color
+//                int x = random(0, windowWidth);
+//                int y = random(0, windowHeight);
+//
+//                int xV = random(minSpeed, maxSpeed);
+//                int yV = random(minSpeed, maxSpeed);
+//
+//                ball.setCoords(x, y);
+//                ball.setVels(xV, yV);
+//                ball.setColor(randColor());
+//            }
+//
+//            tm = new Timer(timerDelay, this); // TODO: Replace the first argument with delay with value from config file.
+//
+//        } catch (Exception e) {
+//            System.err.println("Property was not found, using default values.");
+//            gravity = 10;
+//            friction = 2;
+//            minSpeed = 5;
+//            maxSpeed = 35;
+//            timerDelay = 75;
+//            balls = 7;
+//            windowHeight = 480;
+//            windowWidth = 640;
+//            ballRadius = 20;
+//        }
     } //end RollBounce()
 
 
@@ -73,7 +162,13 @@ public class RollBounce extends JPanel implements ActionListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g); // Probably best you leave this as is.
 
-        g.fillOval(ball1.xCoord, ball1.yCoord, ball_radius, ball_radius);
+//        for (Ball b : allBalls) {
+//            g.setColor(b.getColor());
+//            g.fillOval(b.xCoord, b.yCoord, ballRadius, ballRadius);
+//        }
+
+        g.setColor(b.getColor());
+        g.fillOval(b.xCoord, b.yCoord, ballRadius, ballRadius);
 
         // Recommend you leave the next line as is
         tm.start(); //then all the actionPerformed stuff happens
@@ -83,250 +178,47 @@ public class RollBounce extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-//        System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
-//        System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
-//        System.out.println("ballHeight: " + ball1.ballHeight);
-
-
-
-//        ball1.yVel += gravity;
-
-//        ball1.xCoord += ball1.xVel;
-//        ball1.yCoord += ball1.yVel;
-//
-//        if (ball1.xCoord < 0) {
-//            ball1.xVel = 1;
-//        }
-//        if (ball1.xCoord - ball_radius > window_width) {
-//            ball1.xVel = -1;
-//        }
-//
-//        if (ball1.yCoord < 0) {
-//            ball1.yVel = 1;
-//        }
-//        if (ball1.yCoord - ball_radius > window_height && ball1.yVel > 0) {
-//            ball1.yVel *= -0.98;
-//        }
-//        if (ball1.yCoord - ball_radius > window_height && ball1.yVel < 0) {
-//            ball1.yVel *= 0.98;
-//        }
-//        repaint();
-
-
-//        ball1.xCoord += gravity;
-//        ball1.yCoord += gravity;
-
-        if (ball1.moveDown) {
-//            System.out.println("move down");
-            if (ball1.yCoord > window_height) { //touch bottom
-                ball1.moveDown = false;
-                System.out.println("touch bottom");
-
-                ball1.ballHeight *= 5; //+= (ball1.ballHeight / 2); //new height is
-
-                ball1.xVel = ball1.xVel / friction;
-                ball1.yVel = -ball1.yVel / friction;
-
-                ball1.xCoord += ball1.xVel;
-                ball1.yCoord += ball1.yVel;
-
-                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
-                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+//        for (Ball b : allBalls) {
+            if (b.xCoord <= ballRadius || b.xCoord >= windowWidth - ballRadius) { //hits left or right
+                b.xVel = -(b.xVel - friction); //change the vel
             }
-            else if (ball1.xCoord < 0) { //touch left
-                System.out.println("touch left down");
-
-                ball1.moveRight = true;
-
-//                ball1.ballHeight += -ball1.xCoord;
-
-                ball1.xVel *= -1;
-                ball1.yVel *= -1;
-
-                ball1.xCoord = -ball1.xCoord;
-                ball1.yCoord += ball1.yVel;
-
-                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
-                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+            if (b.yCoord <= ballRadius || b.yCoord >= windowHeight - ballRadius) { //hits top or bottom
+                b.yVel = -(b.yVel - friction); //change the vel
             }
-            else if (ball1.xCoord > window_width) { //touch right
-                System.out.println("touch right down");
 
-                ball1.moveRight = false;
-
-//                ball1.ballHeight += window_width - ball1.xCoord;
-
-                ball1.xVel *= -1;
-                ball1.yVel *= -1;
-
-                ball1.xCoord = window_width - ball1.xCoord;
-                ball1.yCoord += ball1.yVel;
-
-                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
-                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+            if (b.xCoord + b.xVel >= windowWidth) {//reaches right side
+                b.xCoord = windowWidth - ballRadius;
             }
-//            else {
-                System.out.print("just move down");
-                if (ball1.moveRight) {
-                    System.out.println(" right");
-                    ball1.xCoord += ball_radius;
+            else {
+                b.xCoord += b.xVel; //move horz
+            }
+
+            b.yVel += gravity; //continue to drop ball
+
+            if (b.yCoord + b.yVel >= windowHeight) { //reaches bottom
+                b.yCoord = windowHeight - ballRadius;
+                if (b.xVel != 0) {//if ball still rolling, keep it moving
+                    b.xVel += b.xVel > 0 ? -friction : friction;
                 }
                 else {
-                    System.out.println(" left");
-                    ball1.xCoord -= ball_radius;
+                    b.xVel = 0;
                 }
-                ball1.yCoord += ball_radius;
-//            }
-        }
-        else {
-//            System.out.println("move up");
-            if (ball1.yCoord < ball1.ballHeight) { //touch top
-                ball1.moveDown = true;
-
-                ball1.ballHeight *= 5; //+= (ball1.ballHeight / 2);
-                System.out.println("touch top up");
-
-                ball1.xVel = ball1.xVel / friction;
-                ball1.yVel = -ball1.yVel / friction;
-
-                ball1.xCoord += ball1.xVel;
-                ball1.yCoord -= ball1.yVel;
-
-                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
-                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
+            } else {
+                b.yCoord += b.yVel; //move vert
             }
-            else if (ball1.xCoord < 0) { //touch left
-                ball1.moveDown = true;
-                ball1.moveRight = true;
 
-                System.out.println("touch left up");
-
-//                ball1.ballHeight = ((window_height + ball1.yCoord) / 2) + 1; //*= 1.5;
-
-                ball1.xVel *= -1;
-                ball1.yVel *= -1;
-                ball1.xCoord -= ball1.xVel;
-                ball1.yCoord += ball1.yVel;
-
-                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
-                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
-            }
-            else if (ball1.xCoord - ball_radius > window_width) { //touch right
-                ball1.moveDown = true;
-                ball1.moveRight = false;
-
-                System.out.println("touch right up");
-
-//                ball1.ballHeight = ((window_height + ball1.yCoord) / 2) + 1; //*= 1.5;
-
-                ball1.xVel *= -1;
-                ball1.yVel *= -1;
-                ball1.xCoord = window_width;
-                ball1.yCoord = ((window_height + ball1.yCoord) / 2) + 1; //ball1.yVel; //(window_height + ball1.yCoord) / 2
-
-                System.out.println("ball coords: " + ball1.xCoord + " " + ball1.yCoord);
-                System.out.println("ball vels: " + ball1.xVel + " " + ball1.yVel);
-            }
-//            else {
-                System.out.print("just move up");
-                if (ball1.moveRight) {
-                    System.out.println(" right");
-                    ball1.xCoord += ball_radius;
-                }
-                else {
-                    System.out.println(" left");
-                    ball1.xCoord -= ball_radius;
-                }
-                ball1.yCoord -= ball_radius;
-//            }
-        }
-//        ball1.xCoord += ball1.xVel;
-//        ball1.yCoord += ball1.yVel;
-        repaint();
-
-
-//        ball1.xCoord += ball1.xVel;
-//        ball1.yCoord += ball1.yVel;
-//        if (ball1.xCoord > window_width || ball1.xCoord < 0) { //if x coord hits R / L side
-//            System.out.println("hit r/l wall");
-//            ball1.xCoord = ball1.xCoord < 0 ? 0 : ball1.xCoord; //if x < 0, x = 0, else x = x
-//            ball1.xCoord = ball1.xCoord > window_width ? window_width : ball1.xCoord; //if x > top, x = top, else x = x
-//            // yvel -= FRICTION;
-//            ball1.xVel *= -1; //change direction
-//
-//            System.out.println("xCoord: " + ball1.xCoord + " xVel: " + ball1.xVel);
-//            // Apply friction... should probably be a function onto itself.
-//            if (ball1.xVel > 0) {
-//                System.out.println("r/l wall if");
-//                ball1.xVel -= friction;
-//                System.out.println("xVel: " + ball1.xVel);
-//                System.out.println("yVel: " + ball1.yVel);
-//
-//                if (ball1.xVel < 0) {
-//                    System.out.println("r/l wall if if");
-//                    ball1.xVel = 0;
-//                    System.out.println("xVel: " + ball1.xVel);
-//                    System.out.println("yVel: " + ball1.yVel);
-//
-//                }
-//            } else {
-//                System.out.println("r/l wall else");
-//                ball1.xVel += friction;
-//                System.out.println("xVel: " + ball1.xVel);
-//                System.out.println("yVel: " + ball1.yVel);
-//
-//                if (ball1.xVel > 0) {
-//                    System.out.println("r/l wall else if");
-//                    ball1.xVel = 0;
-//                    System.out.println("xVel: " + ball1.xVel);
-//                    System.out.println("yVel: " + ball1.yVel);
-//
+//            if (b.xVel <= 2*friction && b.xVel >= -friction*2) {
+//                if (b.yVel <= 2*friction && b.yVel >= -friction*2) {
+//                    System.out.println("pls stop");
 //                }
 //            }
-//
+
+            System.out.println("---------------" + b);
+            System.out.println("coord: " + b.xCoord + " " + b.yCoord);
+            System.out.println("vels: " + b.xVel + " " + b.yVel);
+
+            repaint();
 //        }
-//
-//        if (ball1.yCoord > window_height || ball1.yCoord < 0) { //if y coord hits top or bottom // xlim <= x <= 0
-//            System.out.println("hit t/b wall");
-//            ball1.yCoord = ball1.yCoord < 0 ? 0 : ball1.yCoord; //if x < 0, x = 0, else x = x
-//            ball1.yCoord = ball1.yCoord > window_height ? window_height : ball1.yCoord; //if x > top, x = top, else x = x
-//            // yvel -= FRICTION;
-//            ball1.yVel *= -1; //change direction
-//
-//            System.out.println("xCoord: " + ball1.yCoord + " xVel: " + ball1.yVel);
-//
-//            // Apply friction... should probably be a function onto itself.
-//            if (ball1.yVel > 0) { //hit a wall
-//                System.out.println("t/b wall if");
-//                ball1.yVel -= friction;
-//                System.out.println("yVel: " + ball1.yVel);
-//                System.out.println("xVel: " + ball1.xVel);
-//
-//                if (ball1.yVel < 0) {
-//                    System.out.println("t/b wall if if");
-//                    ball1.yVel = 0;
-//                    System.out.println("yVel: " + ball1.yVel);
-//                    System.out.println("xVel: " + ball1.xVel);
-//
-//
-//                }
-//            } else {
-//                System.out.println("t/b wall else");
-//                ball1.yVel += friction;
-//                System.out.println("yVel: " + ball1.yVel);
-//                System.out.println("xVel: " + ball1.xVel);
-//
-//                if (ball1.yVel > 0) {
-//                    System.out.println("t/b wall else if");
-//                    ball1.yVel = 0;
-//                    System.out.println("yVel: " + ball1.yVel);
-//                    System.out.println("xVel: " + ball1.xVel);
-//
-//                }
-//            }
-//
-//        } //brizan's code??
-//        repaint();
     } //end actionPerformed()
 
 
@@ -348,13 +240,16 @@ public class RollBounce extends JPanel implements ActionListener {
     } //end random()
 
 
+
+
     public static void main(String[] args) {
         RollBounce rb = new RollBounce("RollBounce.prop"); //RollBounce(args[0]);
 
         JFrame jf = new JFrame();
         jf.setTitle("Roll Bounce");
-        jf.setSize(window_width + 100, window_height + 100); // TODO: Replace with the size from configuration!
+        jf.setSize(windowWidth, windowHeight + 50); //640x480
         jf.add(rb);
+//        jf.getRootPane().setBorder(BorderFactory.createMatteBorder(windowWidth, windowHeight, windowWidth, windowHeight, Color.BLACK));
         jf.setVisible(true);
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     } //end main()
