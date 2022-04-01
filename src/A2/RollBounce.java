@@ -163,6 +163,7 @@ public class RollBounce extends JPanel implements ActionListener {
         for (int i = 0; i < allBalls.size(); i++) {
             Ball b = (Ball)allBalls.get(i);
 
+            //changing velocities depending when ball hits a border
             if (b.xCoord <= ballRadius || b.xCoord >= windowWidth - ballRadius) { //hits left or right
                 b.xVel = -(b.xVel - friction); //change vel
             }
@@ -170,8 +171,11 @@ public class RollBounce extends JPanel implements ActionListener {
                 b.yVel = -(b.yVel - friction); //change vel
             }
 
-            if (b.xCoord + b.xVel >= windowWidth) {//hits right
+            //changing coord depending if it hit a wall or not
+            if (b.xCoord + b.xVel >= windowWidth) { //hits right
                 b.xCoord = windowWidth - ballRadius;
+            } else if (b.xCoord + b.xVel <= ballRadius) { //hits left
+                b.xCoord = ballRadius;
             } else {
                 b.xCoord += b.xVel; //move horz
                 if (b.xCoord > windowWidth - ballRadius) {
@@ -181,22 +185,22 @@ public class RollBounce extends JPanel implements ActionListener {
 
             if (b.yCoord <= windowHeight - ballRadius) { //apply gravity only if ball is not touching bottom
                 b.yVel += gravity; //continue to drop ball (in its direction)
-                System.out.println("vels: " + b.xVel + " " + b.yVel);
-                System.out.println("adding garivyt");
-                if (b.yVel >= -friction && b.yVel <= friction) {
+                if (b.yVel >= -friction && b.yVel <= friction) { //y vel coming to a stop (stop vert bouncing)
                     b.yVel = 0;
                 }
             }
 
             if ((b.xVel >= -friction && b.xVel <= friction) && b.yCoord == windowHeight - ballRadius) {
-                b.xVel = 0;
+                b.xVel = 0; //stop horz bouncing
             }
 
-            if (b.yCoord + b.yVel >= windowHeight - ballRadius) { //if moving the ball hits bottom
+            if (b.yCoord + b.yVel >= windowHeight - ballRadius) { //hits bottom
                 b.yCoord = windowHeight - ballRadius;
                 if (b.xVel != 0) {//if ball still rolling, keep it moving
                     b.xVel += b.xVel > 0 ? -friction : friction;
                 }
+            } else if (b.yCoord + b.yVel <= ballRadius) { //hits top (shouldn't ever be the case, but sanity check
+                b.yCoord = ballRadius;
             } else { //continue to move ball in direction of travel
                 b.yCoord += b.yVel; //move vert
                 if (b.yCoord >= windowHeight - ballRadius) {
