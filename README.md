@@ -3,10 +3,10 @@ Mia Kobayashi
 31 March 2022  
 
 **How the code works:**  
-This program recursively solves a Nonogram Puzzle (which must be a size within 9x9 and each row/column has no more than 2 sets of blocks (starting constraints).  
+//fixme  
 
 **Difficulties:**  
-sdf  
+So, so much trouble.  The amount of thought dedicated to physics that went into this assignment?  (!)Happy.  There was first trouble with a ball not moving, then moving too fast, then moving quickly in an bound area that shouldn't have constricted movement, then balls never stop bouncing, and then balls having seizures.  Also the properties file is weird.  
 
 ## RollBounce  
 The goal of this assignment is to demonstrate your understanding of lists and polymorphism, along with coding to an API in order to demonstrate a simulation of bouncing balls.  
