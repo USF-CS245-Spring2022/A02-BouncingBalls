@@ -1,5 +1,5 @@
 // @author: Mia Kobayashi
-// @date and version: 31 Mar 2022, v.6
+// @date and version: 30 Mar 2022, v.2
 // CS245 Assignment 2: Roll Bounce
 
 package A2;
@@ -39,7 +39,7 @@ public class RollBounce extends JPanel implements ActionListener {
         private int xVel, yVel;
 
         public Ball() {
-//            size = new Dimension(ballRadius, ballRadius);
+            this.yVel = 0;
         }
 
         public void setCoords(int x, int y) {
@@ -47,24 +47,18 @@ public class RollBounce extends JPanel implements ActionListener {
             this.yCoord = y;
         }
 
-        public void setVels(int xV, int yV) {
+        public void setVel(int xV) {
             this.xVel = xV;
-            this.yVel = yV;
         }
 
         public void setColor(Color color) {
             this.color = color;
         }
 
-        public Color getColor() {
-            return color;
-        }
-
     } //end Ball class
 
 
     public RollBounce (String propertyFileName) {
-
         gravity = 10;
         friction = 2;
         minSpeed = 5;
@@ -81,30 +75,18 @@ public class RollBounce extends JPanel implements ActionListener {
                 allBalls.add(new Ball());
         }
 
-            for (Ball ball : allBalls) { //set starting coords & vels & color
-                int x = random(0, windowWidth);
-                int y = random(0, windowHeight);
+        for (Ball ball : allBalls) { //set starting coords & vels & color
+            int x = random(0, windowWidth);
+            int y = random(0, windowHeight);
 
-                int xV = random(minSpeed, maxSpeed);
-                int yV = random(minSpeed, maxSpeed);
+            int xV = random(minSpeed, maxSpeed);
+//            int yV = 0;
 
-                ball.setCoords(x, y);
-                ball.setVels(xV, yV);
-                ball.setColor(randColor());
-            }
-////
-//        b = new Ball();
-//
-//        int x = random(0, windowWidth);
-//        int y = random(0, windowHeight);
-//
-//        int xV = random(minSpeed, maxSpeed);
-//        int yV = random(minSpeed, maxSpeed);
-//
-//        b.setCoords(x, y);
-//        b.setVels(xV, yV);
-//        b.setColor(randColor());
-//
+            ball.setCoords(x, y);
+            ball.setVel(xV);
+            ball.setColor(randColor());
+        }
+
         tm = new Timer(timerDelay, this);
 
 //        Properties p = new Properties();
@@ -173,12 +155,9 @@ public class RollBounce extends JPanel implements ActionListener {
         super.paintComponent(g); // Probably best you leave this as is.
 
         for (Ball b : allBalls) {
-            g.setColor(b.getColor());
+            g.setColor(b.color);
             g.fillOval(b.xCoord, b.yCoord, ballRadius, ballRadius);
         }
-
-//        g.setColor(b.getColor());
-//        g.fillOval(b.xCoord, b.yCoord, ballRadius, ballRadius);
 
         // Recommend you leave the next line as is
         tm.start(); //then all the actionPerformed stuff happens
@@ -189,15 +168,12 @@ public class RollBounce extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         for (Ball b : allBalls) {
-            System.out.println("vels: " + b.xVel + " " + b.yVel);
             if (b.xCoord <= ballRadius || b.xCoord >= windowWidth - ballRadius) { //hits left or right
                 b.xVel = -(b.xVel - friction); //change vel
             }
             if (b.yCoord <= ballRadius || b.yCoord >= windowHeight - ballRadius) { //hits top or bottom
                 b.yVel = -(b.yVel - friction); //change vel
             }
-
-
 
             if (b.xCoord + b.xVel >= windowWidth) {//hits right
                 b.xCoord = windowWidth - ballRadius;
@@ -208,41 +184,32 @@ public class RollBounce extends JPanel implements ActionListener {
                 }
             }
 
-
-            if (!(b.yCoord > windowHeight - ballRadius)) { //apply gravity only if ball is not touching bottom
+            if (b.yCoord <= windowHeight - ballRadius) { //apply gravity only if ball is not touching bottom
                 b.yVel += gravity; //continue to drop ball (in its direction)
-            }
-
-
-            //fixme
-            if ((b.yVel >= -friction && b.yVel <= friction) && b.yCoord == windowHeight - ballRadius) { //at some point, the yVel needs to become 0 & x
-                b.yVel = 0;
                 System.out.println("coord: " + b.xCoord + " " + b.yCoord);
-                System.out.println("yVel becomes zero");
+                System.out.println("vels: " + b.xVel + " " + b.yVel);
+                System.out.println("adding garivyt");
+                if (b.yVel >= -friction && b.yVel <= friction) {
+                    b.yVel = 0;
+                }
+            } //fixme?
+
+            if ((b.xVel >= -friction && b.xVel <= friction) && b.yCoord == windowHeight - ballRadius) {
+                b.xVel = 0;
             }
 
             if (b.yCoord + b.yVel >= windowHeight - ballRadius) { //if moving the ball hits bottom
                 b.yCoord = windowHeight - ballRadius;
                 if (b.xVel != 0) {//if ball still rolling, keep it moving
                     b.xVel += b.xVel > 0 ? -friction : friction;
-                } else {
-                    b.xVel = 0;
                 }
-
             } else { //continue to move ball in direction of travel
                 b.yCoord += b.yVel; //move vert
-                if (b.yCoord > windowHeight - ballRadius) {
+                if (b.yCoord >= windowHeight - ballRadius) {
                     b.yCoord = windowHeight - ballRadius;
                 }
             }
-
-//        System.out.println(b.xVel);
-
-//            System.out.println("---------------");
-//            System.out.println("coord: " + b.xCoord + " " + b.yCoord);
-//            System.out.println("vels: " + b.xVel + " " + b.yVel);
-
-            repaint();
+            repaint(); //show the changed ball position
         } //end for
     } //end actionPerformed()
 
