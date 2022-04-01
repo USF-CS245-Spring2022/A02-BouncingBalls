@@ -1,5 +1,5 @@
 // @author: Mia Kobayashi
-// @date and version: 30 Mar 2022, v.2
+// @date and version: 30 Mar 2022, v.6
 // CS245 Assignment 2: Roll Bounce
 
 package A2;
