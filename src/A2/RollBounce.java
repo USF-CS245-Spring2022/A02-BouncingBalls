@@ -73,7 +73,6 @@ public class RollBounce extends JPanel implements ActionListener {
             p.load(inputStream);
             gravity = (int) p.get("gravity");
             friction = (int) p.get("friction");
-            allBalls = (List<Ball>) Class.forName((String) p.get("list")).getDeclaredConstructor().newInstance();
             list = (String) p.get("list");
             minSpeed = (int) p.get("minspeed");
             maxSpeed = (int) p.get("maxSpeed");
@@ -83,17 +82,14 @@ public class RollBounce extends JPanel implements ActionListener {
             windowWidth = (int) p.get("window_width");
             ballRadius = (int) p.get("ball_radius");
 
-            if (list.equals("arrayList")) {
+            if (list.equalsIgnoreCase("arraylist")) {
                 allBalls = new ArrayList<Ball>();
             }
             else {
                 allBalls = new ListNode<Ball>();
             }
-
-            System.out.println("try worked");
-
         } catch (Exception e) {
-            System.err.println("Property was not found, using default values.");
+            System.out.println("Property was not found, using default values.");
             gravity = 10;
             friction = 2;
             minSpeed = 5;
@@ -161,7 +157,7 @@ public class RollBounce extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         for (int i = 0; i < allBalls.size(); i++) {
-            Ball b = (Ball)allBalls.get(i);
+            Ball b = (Ball) allBalls.get(i);
 
             //changing velocities depending when ball hits a border
             if (b.xCoord <= ballRadius || b.xCoord >= windowWidth - ballRadius) { //hits left or right
@@ -175,7 +171,7 @@ public class RollBounce extends JPanel implements ActionListener {
             if (b.xCoord + b.xVel >= windowWidth) { //hits right
                 b.xCoord = windowWidth - ballRadius;
             } else if (b.xCoord + b.xVel <= ballRadius) { //hits left
-                b.xCoord = ballRadius;
+                b.xCoord = 0;
             } else {
                 b.xCoord += b.xVel; //move horz
                 if (b.xCoord > windowWidth - ballRadius) {
@@ -185,9 +181,10 @@ public class RollBounce extends JPanel implements ActionListener {
 
             if (b.yCoord <= windowHeight - ballRadius) { //apply gravity only if ball is not touching bottom
                 b.yVel += gravity; //continue to drop ball (in its direction)
-                if (b.yVel >= -friction && b.yVel <= friction) { //y vel coming to a stop (stop vert bouncing)
-                    b.yVel = 0;
-                }
+            }
+
+            if (b.yVel >= -friction && b.yVel <= friction) { //y vel coming to a stop (stop vert bouncing)
+                b.yVel = 0;
             }
 
             if ((b.xVel >= -friction && b.xVel <= friction) && b.yCoord == windowHeight - ballRadius) {
